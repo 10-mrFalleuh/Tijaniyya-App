@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compteur de Perles - Youware</title>
+    <style>
+        :root {
+            --bead-primary: #e74c3c;
+            --bead-primary-dark: #c0392b;
+            --bead-border: #27ae60;
+            --bead-size: 50px;
+            --app-bg: #f4f4f9;
+        }
+
+        * { 
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--app-bg);
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            touch-action: manipulation;
+        }
+
+        .youware-container {
+            width: 100%;
+            max-width: 400px;
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h2 {
+            margin: 0 0 10px 0;
+            color: #2c3e50;
+        }
+
+        .counter-big {
+            font-size: 4rem;
+            font-weight: bold;
+            color: #2ecc71;
+            margin: 10px 0;
+            transition: transform 0.1s;
+        }
+
+        .counter-big.bump {
+            transform: scale(1.1);
+        }
+
+        .limits {
+            color: #888;
+            font-size: 1.1rem;
+        }
+
+        /* Menu déroulant */
+        .style-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .style-selector label {
+            display: block;
+            margin-bottom: 8px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .style-select {
+            width: 100%;
+            padding: 12px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            background: white;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s;
+        }
+
+        .style-select:focus {
+            border-color: #3498db;
+        }
+
+        .beads-container {
+            height: 120px;
+            position: relative;
+            overflow: hidden;
+            margin: 20px 0;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .bead {
+            width: var(--bead-size);
+            height: var(--bead-size);
+            position: absolute;
+            bottom: 10px;
+            background: radial-gradient(circle at 30% 30%, var(--bead-primary), var(--bead-primary-dark));
+            border: 3px solid var(--bead-border);
+            border-radius: 50%;
+            box-shadow: 2px 4px 8px rgba(0,0,0,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        /* Zone de tap avec indicateur de doigt */
+        .tap-area {
+            position: relative;
+            width: 100%;
+            height: 220px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            user-select: none;
+            margin-top: 20px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+            transition: transform 0.1s;
+        }
+
+        .tap-area:active {
+            transform: scale(0.98);
+        }
+
+        /* Indicateur de doigt */
+        .finger-indicator {
+            position: absolute;
+            top: 30px;
+            width: 60px;
+            height: 60px;
+            animation: tapPulse 1.5s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        .finger-indicator svg {
+            width: 100%;
+            height: 100%;
+            fill: white;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        @keyframes tapPulse {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.8;
+            }
+        }
+
+        .tap-text {
+            margin-top: 100px;
+            color: white;
+            font-size: 1.2rem;
+            font-weight: 600;
+            text-align: center;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .tap-hint {
+            margin-top: 10px;
+            color: rgba(255,255,255,0.8);
+            font-size: 0.9rem;
+        }
+
+        .swipe-indicator {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(255,255,255,0.6);
+            font-size: 1.5rem;
+            animation: swipeLeft 2s ease-in-out infinite;
+        }
+
+        @keyframes swipeLeft {
+            0%, 100% { transform: translateY(-50%) translateX(0); }
+            50% { transform: translateY(-50%) translateX(-5px); }
+        }
+
+        /* Styles alternatifs de perles */
+        .bead.modern {
+            border-radius: 12px;
+        }
+
+        .bead.minimal {
+            width: 30px;
+            height: 30px;
+            border-width: 2px;
+        }
+
+        .bead.luxury {
+            background: linear-gradient(135deg, #f1c40f 0%, #f39c12 100%);
+            border-color: #d4af37;
+            box-shadow: 0 4px 15px rgba(241, 196, 15, 0.4);
+        }
+
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.6);
+            transform: scale(0);
+            animation: rippleEffect 0.6s ease-out;
+            pointer-events: none;
+        }
+
+        @keyframes rippleEffect {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="youware-container">
+        <div class="header">
+            <h2>📿 Compteur de Perles</h2>
+            <div class="counter-big" id="counter">0</div>
+            <div class="limits">sur <span id="limitDisplay">33</span></div>
+        </div>
+
+        <!-- Menu déroulant pour les styles -->
+        <div class="style-selector">
+            <label for="styleSelect">Style des perles :</label>
+            <select id="styleSelect" class="style-select">
+                <option value="classic">🔴 Classique (Rouge)</option>
+                <option value="modern">🔵 Moderne (Bleu)</option>
+                <option value="minimal">⚪ Minimal (Gris)</option>
+                <option value="luxury">🟡 Luxe (Or)</option>
+            </select>
+        </div>
+
+        <div class="beads-container" id="beadsContainer"></div>
+
+        <!-- Zone de tap avec indicateur -->
+        <div class="tap-area" id="tapArea">
+            <div class="finger-indicator">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M18.5,12.5C18.5,12.5 18.5,12.5 18.5,12.5C18.5,12.5 18.5,12.5 18.5,12.5C18.5,12.5 18.5,12.5 18.5,12.5M18.5,12.5L18.5,12.5C18.5,12.5 18.5,12.5 18.5,12.5M9,12C9,12 9,12 9,12C9,12 9,12 9,12M9,12C9,12 9,12 9,12M12,2C13.11,2 14,2.9 14,4V10C14,11.11 13.11,12 12,12C10.9,12 10,11.11 10,10V4C10,2.9 10.9,2 12,2M7,12C8.11,12 9,12.9 9,14V18C9,19.11 8.11,20 7,20C5.9,20 5,19.11 5,18V14C5,12.9 5.9,12 7,12M17,12C18.11,12 19,12.9 19,14V16C19,17.11 18.11,18 17,18C15.9,18 15,17.11 15,16V14C15,12.9 15.9,12 17,12Z" />
+                    <circle cx="12" cy="6" r="3" fill="white"/>
+                    <path d="M12 9 L12 18" stroke="white" stroke-width="2" stroke-linecap="round"/>
+                    <circle cx="12" cy="20" r="2" fill="white"/>
+                </svg>
+            </div>
+            <div class="swipe-indicator">←</div>
+            <div class="tap-text">TOUCHEZ ICI</div>
+            <div class="tap-hint">Glissez vers la gauche pour diminuer</div>
+        </div>
+    </div>
+
+    <script>
+        let count = 0;
+        let limit = 33;
+        
+        const styles = {
+            classic: { primary: '#e74c3c', dark: '#c0392b', border: '#27ae60', size: '50px' },
+            modern: { primary: '#3498db', dark: '#2980b9', border: '#2c3e50', size: '48px' },
+            minimal: { primary: '#95a5a6', dark: '#7f8c8d', border: '#7f8c8d', size: '35px' },
+            luxury: { primary: '#f1c40f', dark: '#f39c12', border: '#d4af37', size: '45px' }
+        };
+
+        const counterEl = document.getElementById('counter');
+        const limitDisplay = document.getElementById('limitDisplay');
+        const beadsContainer = document.getElementById('beadsContainer');
+        const tapArea = document.getElementById('tapArea');
+        const styleSelect = document.getElementById('styleSelect');
+
+        // Changement de style via menu déroulant
+        styleSelect.addEventListener('change', (e) => {
+            const styleName = e.target.value;
+            const style = styles[styleName];
+            
+            document.documentElement.style.setProperty('--bead-primary', style.primary);
+            document.documentElement.style.setProperty('--bead-primary-dark', style.dark);
+            document.documentElement.style.setProperty('--bead-border', style.border);
+            document.documentElement.style.setProperty('--bead-size', style.size);
+            
+            // Ajouter classe spécifique
+            document.querySelectorAll('.bead').forEach(bead => {
+                bead.className = 'bead';
+                if (styleName !== 'classic') {
+                    bead.classList.add(styleName);
+                }
+            });
+            
+            renderBeads();
+        });
+
+        function updateCounter() {
+            counterEl.textContent = count;
+            limitDisplay.textContent = limit;
+            
+            // Animation bump
+            counterEl.classList.add('bump');
+            setTimeout(() => counterEl.classList.remove('bump'), 100);
+        }
+
+        function renderBeads() {
+            beadsContainer.innerHTML = '';
+            
+            const visibleBeads = Math.min(count, 15);
+            const styleName = styleSelect.value;
+            const beadSize = parseInt(styles[styleName].size);
+            const gap = beadSize + 10;
+            
+            for (let i = 0; i < visibleBeads; i++) {
+                const bead = document.createElement('div');
+                bead.className = 'bead';
+                if (styleName !== 'classic') {
+                    bead.classList.add(styleName);
+                }
+                
+                const offset = i * gap;
+                bead.style.right = offset + 'px';
+                bead.style.opacity = i > 8 ? 0.3 + (visibleBeads - i) * 0.05 : 1;
+                bead.style.zIndex = visibleBeads - i;
+                
+                beadsContainer.appendChild(bead);
+            }
+        }
+
+        // Effet ripple au touch
+        function createRipple(x, y) {
+            const ripple = document.createElement('div');
+            ripple.className = 'ripple';
+            ripple.style.width = '50px';
+            ripple.style.height = '50px';
+            ripple.style.left = (x - 25) + 'px';
+            ripple.style.top = (y - 25) + 'px';
+            tapArea.appendChild(ripple);
+            
+            setTimeout(() => ripple.remove(), 600);
+        }
+
+        // Gestion du tap/click
+        function handleTap(e) {
+            const rect = tapArea.getBoundingClientRect();
+            const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+            const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+            
+            createRipple(x, y);
+            
+            if (count < limit) {
+                count++;
+                updateCounter();
+                renderBeads();
+            }
+        }
+
+        tapArea.addEventListener('click', handleTap);
+        tapArea.addEventListener('touchstart', (e) => {
+            e.preventDefault(); // Empêche le zoom double-tap
+            handleTap(e);
+        }, { passive: false });
+
+        // Gestion du swipe gauche
+        let touchStartX = 0;
+        
+        tapArea.addEventListener('touchstart', (e) => {
+            touchStartX = e.changedTouches[0].screenX;
+        }, { passive: true });
+        
+        tapArea.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].screenX;
+            const diff = touchStartX - touchEndX;
+            
+            if (diff > 50 && count > 0) { // Swipe gauche
+                count--;
+                updateCounter();
+                renderBeads();
+            }
+        }, { passive: true });
+
+        // Initialisation
+        updateCounter();
+        renderBeads();
+    </script>
+</body>
+</html>
