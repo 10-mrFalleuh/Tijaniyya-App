@@ -39,9 +39,10 @@ export default function LoginPage() {
         return;
       }
 
-      if (data.user) {
-        navigate('/');
+      if (data?.user) {
+      navigate('/');
       }
+      
     } catch (err) {
       console.error(err);
       setError('Erreur lors de la connexion.');
@@ -52,24 +53,29 @@ export default function LoginPage() {
 
   // Connexion Google
   const handleGoogleLogin = async () => {
-    try {
-      setError('');
+  if (loading) return;
 
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: window.location.origin,
-        },
-      });
+  setLoading(true);
+  setError('');
 
-      if (error) {
-        setError(error.message);
-      }
-    } catch (err) {
-      console.error(err);
-      setError('Impossible de se connecter avec Google.');
+  try {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: {
+        redirectTo: `${window.location.origin}/`,
+      },
+    });
+
+    if (error) {
+      setError(error.message);
+      setLoading(false);
     }
-  };
+  } catch (err) {
+    console.error(err);
+    setError('Impossible de se connecter avec Google.');
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen min-h-[100dvh] bg-cream dark:bg-gray-950 bg-islamic-pattern flex items-center justify-center px-4">
@@ -95,6 +101,7 @@ export default function LoginPage() {
 
         {/* Google */}
         <button
+          type="button"
           onClick={handleGoogleLogin}
           disabled={loading}
           className="w-full flex items-center justify-center gap-3 py-3 px-4 rounded-xl

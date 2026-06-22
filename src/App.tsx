@@ -8,6 +8,9 @@ import WirdReader from './pages/WirdReader';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import SettingsPage from './pages/SettingsPage';
+import ProfilePage from './pages/ProfilePage';
+import AccountSecurityPage from './pages/AccountSecurityPage';
+import EditProfilePage from './pages/EditProfilePage';
 import MediaLibraryPage from './pages/MediaLibraryPage';
 import AboutPage from './pages/AboutPage';
 import AudioPage from './pages/AudioPage';
@@ -17,9 +20,14 @@ import BottomNav from './components/BottomNav';
 
 import SuperAdminLoginPage from './pages/superadmin/SuperAdminLoginPage';
 import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard';
+import UsersManagementPage from './pages/superadmin/UsersManagementPage';
 
 function AppInit() {
-  const { login, logout } = useAppStore();
+  const {
+    login,
+    logout,
+    setAuthLoading,
+  } = useAppStore();
 
   useEffect(() => {
     const syncUser = (user: any) => {
@@ -33,18 +41,31 @@ function AppInit() {
         gender: '',
         phone: '',
         country: '',
-        provider: user.app_metadata?.provider || 'email',
+        provider:
+          user.app_metadata?.provider || 'email',
       });
     };
 
-    // Session existante
-    supabase.auth.getSession().then(({ data }) => {
-      if (data.session?.user) {
-        syncUser(data.session.user);
-      }
-    });
+    const initializeAuth = async () => {
+      try {
+        const { data } =
+          await supabase.auth.getSession();
 
-    // Écoute des changements de session
+        if (data.session?.user) {
+          syncUser(data.session.user);
+        }
+      } catch (error) {
+        console.error(
+          'Erreur récupération session:',
+          error
+        );
+      } finally {
+        setAuthLoading(false);
+      }
+    };
+
+    initializeAuth();
+
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange(
@@ -57,8 +78,10 @@ function AppInit() {
       }
     );
 
-    return () => subscription.unsubscribe();
-  }, [login, logout]);
+    return () => {
+      subscription.unsubscribe();
+    };
+  }, [login, logout, setAuthLoading]);
 
   return null;
 }
@@ -68,10 +91,31 @@ function ProtectedRoute({
 }: {
   children: React.ReactNode;
 }) {
-  const { isAuthenticated } = useAppStore();
+  const {
+    isAuthenticated,
+    authLoading,
+  } = useAppStore();
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-white dark:bg-gray-950">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary-600 mx-auto mb-3" />
+          <p className="text-gray-600 dark:text-gray-300">
+            Chargement...
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    );
   }
 
   return <>{children}</>;
@@ -183,6 +227,39 @@ function App() {
           }
         />
 
+        <Route
+  path="/profile"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <ProfilePage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/profile/edit"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <EditProfilePage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/account-security"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <AccountSecurityPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
+
         {/* About */}
         <Route
           path="/about"
@@ -208,20 +285,53 @@ function App() {
         />
 
         {/* Super Admin */}
-        <Route
-          path="/superadmin/login"
-          element={<SuperAdminLoginPage />}
-        />
+       <Route
+  path="/superadmin"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <SuperAdminDashboard />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
 
-        <Route
-          path="/superadmin/dashboard"
-          element={<SuperAdminDashboard />}
-        />
+       <Route
+  path="/superadmin/dashboard"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <SuperAdminDashboard />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
 
-        {/* Fallback */}
+<Route
+  path="/superadmin/users"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <UsersManagementPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/superadmin/users"
+  element={<UsersManagementPage />}
+/>
+
+        {/* Catch-all */}
         <Route
           path="*"
-          element={<Navigate to="/" replace />}
+          element={
+            <Navigate
+              to="/"
+              replace
+            />
+          }
         />
       </Routes>
     </BrowserRouter>
