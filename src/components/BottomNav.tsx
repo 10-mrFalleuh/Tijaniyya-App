@@ -1,3 +1,6 @@
+import { NavLink } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+
 import {
   Home,
   Volume2,
