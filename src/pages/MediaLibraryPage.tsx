@@ -1,157 +1,224 @@
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useAppStore } from '../store/appStore';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, Plus, Link2, Youtube, Trash2, ExternalLink, X } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-
-function getYoutubeId(url: string) {
-  const match = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([\w-]{11})/);
-  return match ? match[1] : null;
-}
+import { motion } from 'framer-motion';
+import {
+  Search,
+  BookOpen,
+  Headphones,
+  Library,
+  Heart,
+  ChevronRight,
+} from 'lucide-react';
 
 export default function MediaLibraryPage() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const { mediaLinks, addMediaLink, removeMediaLink, user } = useAppStore();
-  const [showModal, setShowModal] = useState(false);
-  const [newTitle, setNewTitle] = useState('');
-  const [newUrl, setNewUrl] = useState('');
 
-  const isSuperAdmin = user?.email === 'superadmin@wird.com';
-
-  const handleAdd = () => {
-    if (!newTitle.trim() || !newUrl.trim()) return;
-    const isYT = newUrl.includes('youtube.com') || newUrl.includes('youtu.be');
-    addMediaLink({ title: newTitle, url: newUrl, type: isYT ? 'youtube' : 'web' });
-    setNewTitle('');
-    setNewUrl('');
-    setShowModal(false);
-  };
+  const categories = [
+    {
+      title: 'Wirds',
+      icon: BookOpen,
+      color: 'text-primary-600',
+      route: '/wirds',
+    },
+    {
+      title: 'Audios',
+      icon: Headphones,
+      color: 'text-green-600',
+      route: '/audio',
+    },
+    {
+      title: 'E-books',
+      icon: Library,
+      color: 'text-amber-600',
+      route: '/ebooks',
+    },
+    {
+      title: 'Favoris',
+      icon: Heart,
+      color: 'text-red-500',
+      route: '/favorites',
+    },
+  ];
 
   return (
-    <div className="min-h-screen min-h-[100dvh] bg-cream dark:bg-gray-950 pb-24">
-      {/* Header */}
-      <div className="glass-header text-white safe-top sticky top-0 z-50">
-        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <button onClick={() => navigate(-1)} className="p-2 rounded-lg bg-white/15 active:bg-white/25 touch-target">
-              <ArrowLeft className="w-5 h-5" />
-            </button>
-            <h1 className="font-display font-semibold text-lg">{t('mediaLibrary')}</h1>
-          </div>
-          {isSuperAdmin && (
-            <button onClick={() => setShowModal(true)}
-              className="p-2 rounded-lg bg-white/15 active:bg-white/25 touch-target">
-              <Plus className="w-5 h-5" />
-            </button>
-          )}
+    <div className="min-h-screen bg-cream dark:bg-gray-950 pb-24">
+
+      {/* HEADER */}
+
+      <div className="bg-primary-800 text-white">
+        <div className="max-w-2xl mx-auto px-4 py-5">
+
+          <h1 className="text-2xl font-bold">
+            📚 Médiathèque
+          </h1>
+
+          <p className="text-sm opacity-80 mt-1">
+            Tous vos contenus réunis
+          </p>
+
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-6">
-        {mediaLinks.length === 0 ? (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}
-            className="text-center py-16">
-            <div className="w-16 h-16 mx-auto mb-4 rounded-full bg-primary-100 dark:bg-primary-900/20 flex items-center justify-center">
-              <Link2 className="w-8 h-8 text-primary-500" />
-            </div>
-            <p className="text-gray-500 dark:text-gray-400 text-sm">{t('noMedia')}</p>
-            {isSuperAdmin && (
-              <button onClick={() => setShowModal(true)}
-                className="mt-4 px-6 py-2.5 rounded-xl bg-primary-600 text-white text-sm font-medium active:scale-[0.98]">
-                {t('addLink')}
-              </button>
-            )}
-          </motion.div>
-        ) : (
-          <div className="space-y-3">
-            {mediaLinks.map((link, i) => (
-              <motion.div key={link.id}
-                initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-white dark:bg-gray-900 rounded-2xl border border-gray-100 dark:border-gray-800 overflow-hidden"
-              >
-                {/* YouTube Thumbnail */}
-                {link.type === 'youtube' && getYoutubeId(link.url) && (
-                  <a href={link.url} target="_blank" rel="noopener noreferrer">
-                    <img
-                      src={`https://img.youtube.com/vi/${getYoutubeId(link.url)}/mqdefault.jpg`}
-                      alt={link.title}
-                      className="w-full h-40 object-cover"
-                    />
-                  </a>
-                )}
-                <div className="p-4 flex items-center justify-between gap-3">
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0
-                      ${link.type === 'youtube' ? 'bg-red-100 dark:bg-red-900/20' : 'bg-primary-100 dark:bg-primary-900/20'}`}>
-                      {link.type === 'youtube'
-                        ? <Youtube className="w-4 h-4 text-red-500" />
-                        : <Link2 className="w-4 h-4 text-primary-500" />
-                      }
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-gray-800 dark:text-gray-200 truncate">{link.title}</p>
-                      <p className="text-xs text-gray-400 truncate">{link.url}</p>
-                    </div>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <a href={link.url} target="_blank" rel="noopener noreferrer"
-                      className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-400">
-                      <ExternalLink className="w-4 h-4" />
-                    </a>
-                    {isSuperAdmin && (
-                      <button onClick={() => removeMediaLink(link.id)}
-                        className="p-2 rounded-lg hover:bg-red-50 dark:hover:bg-red-900/10 text-gray-400 hover:text-red-500">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        )}
-      </div>
+      <div className="max-w-2xl mx-auto p-4 space-y-6">
 
-      {/* Add Modal */}
-      <AnimatePresence>
-        {showModal && (
-          <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/50 backdrop-blur-sm px-4 pb-4"
-            onClick={() => setShowModal(false)}>
-            <motion.div
-              initial={{ y: 100, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: 100, opacity: 0 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl p-6">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="font-semibold text-gray-800 dark:text-gray-200">{t('addLink')}</h3>
-                <button onClick={() => setShowModal(false)} className="p-1 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800">
-                  <X className="w-5 h-5 text-gray-400" />
-                </button>
+        {/* RECHERCHE */}
+
+        <div className="relative">
+
+          <Search className="absolute left-4 top-3.5 w-5 h-5 text-gray-400" />
+
+          <input
+            type="text"
+            placeholder="Rechercher un wird, audio ou e-book..."
+            className="
+              w-full
+              pl-12
+              pr-4
+              py-3
+              rounded-2xl
+              bg-white
+              dark:bg-gray-900
+              shadow
+              border
+              border-gray-100
+              dark:border-gray-800
+              outline-none
+            "
+          />
+
+        </div>
+
+        {/* CATÉGORIES */}
+
+        <div>
+
+          <h2 className="font-semibold text-lg mb-4">
+            Catégories
+          </h2>
+
+          <div className="grid grid-cols-2 gap-4">
+
+            {categories.map((item) => {
+              const Icon = item.icon;
+
+              return (
+                <motion.button
+                  whileTap={{ scale: 0.98 }}
+                  key={item.title}
+                  onClick={() => navigate(item.route)}
+                  className="
+                    bg-white
+                    dark:bg-gray-900
+                    rounded-2xl
+                    p-5
+                    shadow
+                    flex
+                    flex-col
+                    items-center
+                    justify-center
+                    gap-3
+                  "
+                >
+                  <Icon
+                    className={`w-8 h-8 ${item.color}`}
+                  />
+
+                  <span className="font-medium">
+                    {item.title}
+                  </span>
+                </motion.button>
+              );
+            })}
+
+          </div>
+
+        </div>
+
+        {/* DERNIERS CONTENUS */}
+
+        <div>
+
+          <h2 className="font-semibold text-lg mb-4">
+            Derniers contenus
+          </h2>
+
+          <div className="space-y-3">
+
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow flex justify-between items-center">
+              <div>
+                <p className="font-medium">
+                  📖 Wird Lazim
+                </p>
+                <p className="text-xs text-gray-500">
+                  Dernière lecture
+                </p>
               </div>
-              <div className="space-y-3">
-                <input type="text" value={newTitle} onChange={(e) => setNewTitle(e.target.value)}
-                  placeholder={t('linkTitlePlaceholder')}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800
-                    border border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-200
-                    focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
-                <input type="url" value={newUrl} onChange={(e) => setNewUrl(e.target.value)}
-                  placeholder={t('linkUrlPlaceholder')}
-                  className="w-full px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800
-                    border border-gray-200 dark:border-gray-700 text-sm text-gray-800 dark:text-gray-200
-                    focus:outline-none focus:ring-2 focus:ring-primary-500/50" />
-                <button onClick={handleAdd}
-                  className="w-full py-3 rounded-xl bg-primary-600 text-white font-semibold text-sm
-                    active:scale-[0.98] transition-all touch-target">
-                  {t('addBtn')}
-                </button>
+
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </div>
+
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow flex justify-between items-center">
+              <div>
+                <p className="font-medium">
+                  🎧 Salatoul Fatihi
+                </p>
+                <p className="text-xs text-gray-500">
+                  Audio récent
+                </p>
               </div>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </div>
+
+            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow flex justify-between items-center">
+              <div>
+                <p className="font-medium">
+                  📚 Jawahiroul Ma'ani
+                </p>
+                <p className="text-xs text-gray-500">
+                  E-book
+                </p>
+              </div>
+
+              <ChevronRight className="w-5 h-5 text-gray-400" />
+            </div>
+
+          </div>
+
+        </div>
+
+        {/* FAVORIS */}
+
+        <div>
+
+          <h2 className="font-semibold text-lg mb-4">
+            Mes favoris
+          </h2>
+
+          <div
+            className="
+              bg-white
+              dark:bg-gray-900
+              rounded-2xl
+              shadow
+              p-6
+              text-center
+            "
+          >
+            <Heart className="w-10 h-10 mx-auto text-red-500 mb-3" />
+
+            <p className="font-medium">
+              Aucun favori enregistré
+            </p>
+
+            <p className="text-sm text-gray-500 mt-1">
+              Ajoutez vos wirds, audios ou e-books favoris
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
     </div>
   );
 }
