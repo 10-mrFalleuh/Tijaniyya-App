@@ -216,7 +216,8 @@ export default function WirdReader() {
       </main>
 
       {/* ── Boutons précédent / suivant ── */}
-      <footer className="flex-shrink-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 safe-bottom">
+      {/* mb-16 pour ne pas être masqué par la BottomNav (h-16) */}
+      <footer className="flex-shrink-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 mb-16">
         <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <button
             onClick={goPrev}
