@@ -14,7 +14,7 @@ import EditProfilePage from './pages/EditProfilePage';
 import MediaLibraryPage from './pages/MediaLibraryPage';
 import AboutPage from './pages/AboutPage';
 import AudioPage from './pages/AudioPage';
-import ProjectsDashboard from './pages/ProjectsDashboard';
+/*import ProjectsDashboard from './pages/ProjectsDashboard';*/
 
 import BottomNav from './components/BottomNav';
 
@@ -282,7 +282,7 @@ function App() {
           }
         />
 
-        {/* Projects */}
+        {/* Projects 
         <Route
           path="/projets"
           element={
@@ -292,7 +292,7 @@ function App() {
               </MainLayout>
             </ProtectedRoute>
           }
-        />
+        />*/}
 
   
        {/* Super Admin Login */}
