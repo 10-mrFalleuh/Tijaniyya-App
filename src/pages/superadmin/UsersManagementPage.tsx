@@ -44,6 +44,8 @@ export default function UsersManagementPage() {
         .order('created_at', {
           ascending: false,
         });
+        console.log("USERS LOADED:", data);
+        console.log("COUNT:", data?.length);
 
       if (error) {
         console.error(error);
