@@ -47,6 +47,7 @@ export default function UsersManagementPage() {
         console.log(data);
         console.log("USERS LOADED:", data);
         console.log("COUNT:", data?.length);
+        console.log(JSON.stringify(data, null, 2));
 
       if (error) {
         console.error(error);
