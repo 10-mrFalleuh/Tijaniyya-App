@@ -39,15 +39,15 @@ export default function UsersManagementPage() {
       setLoading(true);
 
       const { data, error } = await supabase
-        .from('profiles')
-        .select('id, role')
-        .order('created_at', {
-          ascending: false,
-        });
-        console.log(data);
+  .from('profiles')
+  .select('*')
+  .order('created_at', {
+    ascending: false,
+  });
+        
         console.log("USERS LOADED:", data);
         console.log("COUNT:", data?.length);
-        console.log(JSON.stringify(data, null, 2));
+       
 
       if (error) {
         console.error(error);
