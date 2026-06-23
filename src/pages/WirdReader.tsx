@@ -7,6 +7,7 @@ import { useState, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
 
+
 export default function WirdReader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -15,6 +16,17 @@ export default function WirdReader() {
 
   const section = wirdSections.find((s) => s.id === Number(id));
   const [currentIndex, setCurrentIndex] = useState(0);
+  const nextLitany = () => {
+  if (currentIndex < section.litanies.length - 1) {
+    setCurrentIndex(currentIndex + 1);
+  }
+};
+
+const prevLitany = () => {
+  if (currentIndex > 0) {
+    setCurrentIndex(currentIndex - 1);
+  }
+};
 
   if (!section) {
     return (
@@ -161,6 +173,20 @@ export default function WirdReader() {
         </div>
       </header>
 
+      <div className="flex justify-center gap-2 mt-4 mb-6">
+  {section.litanies.map((_, index) => (
+    <button
+      key={index}
+      onClick={() => setCurrentIndex(index)}
+      className={`w-2.5 h-2.5 rounded-full transition-all ${
+        index === currentIndex
+          ? 'bg-primary-600 scale-125'
+          : 'bg-gray-300 dark:bg-gray-700'
+      }`}
+    />
+  ))}
+</div>
+
       {/* Content - scrollable area for text only */}
       <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-2 flex flex-col overflow-hidden">
         <AnimatePresence mode="wait">
@@ -172,6 +198,7 @@ export default function WirdReader() {
             transition={{ duration: 0.25 }}
             className="flex-1 flex flex-col h-full"
           >
+            
             {/* Text Content Area - Scrollable if needed, but tries to fit */}
             <div className="flex-1 overflow-y-auto flex flex-col min-h-0 pb-2">
               {/* Litany name */}
@@ -231,6 +258,45 @@ export default function WirdReader() {
             )}
           </motion.div>
         </AnimatePresence>
+
+        <div className="flex justify-between items-center mt-8 gap-4">
+
+  <button
+    onClick={prevLitany}
+    disabled={currentIndex === 0}
+    className="
+      flex items-center gap-2
+      px-5 py-3
+      rounded-xl
+      bg-white dark:bg-gray-900
+      shadow
+      disabled:opacity-40
+    "
+  >
+    <ChevronLeft size={18} />
+    Précédent
+  </button>
+
+  <button
+    onClick={nextLitany}
+    disabled={
+      currentIndex === section.litanies.length - 1
+    }
+    className="
+      flex items-center gap-2
+      px-5 py-3
+      rounded-xl
+      bg-primary-600
+      text-white
+      shadow
+      disabled:opacity-40
+    "
+  >
+    Suivant
+    <ChevronRight size={18} />
+  </button>
+
+</div>
       </main>
 
       {/* Navigation footer */}
