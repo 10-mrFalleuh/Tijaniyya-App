@@ -3,10 +3,9 @@ import { useTranslation } from 'react-i18next';
 import { useAppStore } from '../store/appStore';
 import { wirdSections } from '../data/litanies';
 import Sibha from '../components/Sibha';
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowLeft, ChevronLeft, ChevronRight, RotateCcw } from 'lucide-react';
-
+import { ArrowLeft, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
 
 export default function WirdReader() {
   const { id } = useParams<{ id: string }>();
@@ -16,125 +15,106 @@ export default function WirdReader() {
 
   const section = wirdSections.find((s) => s.id === Number(id));
   const [currentIndex, setCurrentIndex] = useState(0);
-  const nextLitany = () => {
-  if (currentIndex < section.litanies.length - 1) {
-    setCurrentIndex(currentIndex + 1);
-  }
-};
 
-const prevLitany = () => {
-  if (currentIndex > 0) {
-    setCurrentIndex(currentIndex - 1);
-  }
-};
+  // ── Swipe ────────────────────────────────────────────────────────────────
+  const touchStartX = useRef<number | null>(null);
 
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      if (diff > 0) goNext();   // swipe gauche → suivant
+      else goPrev();             // swipe droit  → précédent
+    }
+    touchStartX.current = null;
+  };
+
+  // ── Guards ───────────────────────────────────────────────────────────────
   if (!section) {
     return (
-      <div className="min-h-screen min-h-[100dvh] flex items-center justify-center bg-cream dark:bg-gray-950">
-        <p className="text-gray-500">Wird not found</p>
+      <div className="min-h-screen flex items-center justify-center bg-cream dark:bg-gray-950">
+        <p className="text-gray-500">Wird introuvable</p>
       </div>
     );
   }
 
-  // Show coming soon message if no litanies (like annexe section)
   if (section.litanies.length === 0) {
     return (
-      <div className="min-h-screen min-h-[100dvh] bg-cream dark:bg-gray-950 flex flex-col">
+      <div className="min-h-screen bg-cream dark:bg-gray-950 flex flex-col">
         <header className="glass-header text-white safe-top sticky top-0 z-50">
-          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-            <button
-              onClick={() => navigate('/')}
-              className="flex items-center gap-1 text-sm touch-target hover:opacity-80 transition-opacity"
-            >
-              <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
-              <span className="hidden sm:inline">{t('back')}</span>
+          <div className="max-w-2xl mx-auto px-4 py-3 flex items-center">
+            <button onClick={() => navigate('/')} className="touch-target">
+              <ArrowLeft className="w-5 h-5" />
             </button>
-            <div className="text-center flex-1 mx-4">
-              <p className="font-arabic text-base sm:text-lg">{section.nameAr}</p>
-            </div>
+            <p className="font-arabic text-base flex-1 text-center">{section.nameAr}</p>
             <div className="w-8" />
           </div>
         </header>
-        <div className="flex-1 flex items-center justify-center p-6">
-          <div className="text-center">
+        <div className="flex-1 flex items-center justify-center p-6 text-center">
+          <div>
             <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-primary-100 dark:bg-primary-900/40 flex items-center justify-center">
               <span className="text-4xl">⏳</span>
             </div>
-            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">
-              {t('comingSoon')}
-            </h2>
-            <p className="text-gray-500 dark:text-gray-400 text-sm mt-4">
-              {language === 'ar' ? 'قيد التطوير' 
-                : language === 'en' ? 'Under development'
-                : language === 'ms' ? 'Sedang dibangun'
-                : language === 'es' ? 'En desarrollo'
-                : language === 'tr' ? 'Geliştirilmekte'
-                : 'En cours de développement'}
-            </p>
+            <h2 className="text-xl font-semibold text-gray-800 dark:text-white mb-2">{t('comingSoon')}</h2>
+            <p className="text-gray-500 text-sm mt-4">En cours de développement</p>
           </div>
         </div>
       </div>
     );
   }
 
-  const litany = section.litanies[currentIndex];
-  const totalSteps = section.litanies.length;
-  const isFirst = currentIndex === 0;
-  const isLast = currentIndex === totalSteps - 1;
+  const litany   = section.litanies[currentIndex];
+  const total    = section.litanies.length;
+  const isFirst  = currentIndex === 0;
+  const isLast   = currentIndex === total - 1;
 
-  const sectionName = language === 'ar' ? section.nameAr
-    : language === 'en' ? section.nameEn
-    : language === 'ms' ? (section.nameFr || section.nameEn)
-    : language === 'es' ? (section.nameFr || section.nameEn)
-    : language === 'tr' ? (section.nameFr || section.nameEn)
-    : language === 'fa' ? (section.nameFr || section.nameEn)
-    : section.nameFr;
-
-  const litanyName = language === 'ar' ? litany.arName
-    : language === 'en' ? litany.enName
-    : language === 'ms' ? (litany.frName || litany.enName)
-    : language === 'es' ? (litany.frName || litany.enName)
-    : language === 'tr' ? (litany.frName || litany.enName)
-    : language === 'fa' ? (litany.frName || litany.enName)
-    : litany.frName;
-
-  // Get translation for the litany content - supports all 7 languages
-  const getTranslation = (litany: typeof section.litanies[0]) => {
-    switch (language) {
-      case 'ar': return litany.arContent;
-      case 'en': return litany.enContent;
-      case 'ms': return litany.msContent || litany.frContent;
-      case 'es': return litany.esContent || litany.frContent;
-      case 'tr': return litany.trContent || litany.frContent;
-      case 'fa': return litany.faContent || litany.frContent;
-      default: return litany.frContent;
-    }
-  };
-
-  const translation = getTranslation(litany);
-
+  // ── Navigation ───────────────────────────────────────────────────────────
   const goNext = useCallback(() => {
-    if (!isLast) setCurrentIndex((i) => i + 1);
-  }, [isLast]);
+    setCurrentIndex((i) => (i < total - 1 ? i + 1 : i));
+  }, [total]);
 
   const goPrev = useCallback(() => {
-    if (!isFirst) setCurrentIndex((i) => i - 1);
-  }, [isFirst]);
+    setCurrentIndex((i) => (i > 0 ? i - 1 : i));
+  }, []);
 
-  const handleResetAll = () => {
-    resetAllCounters(section.id);
-  };
+  // ── Localisation ─────────────────────────────────────────────────────────
+  const sectionName =
+    language === 'ar' ? section.nameAr
+    : language === 'en' ? section.nameEn
+    : section.nameFr;
+
+  const litanyName =
+    language === 'ar' ? litany.arName
+    : language === 'en' ? litany.enName
+    : litany.frName;
+
+  const translation =
+    language === 'ar' ? litany.arContent
+    : language === 'en' ? litany.enContent
+    : language === 'ms' ? (litany.msContent || litany.frContent)
+    : language === 'es' ? (litany.esContent || litany.frContent)
+    : language === 'tr' ? (litany.trContent || litany.frContent)
+    : language === 'fa' ? (litany.faContent || litany.frContent)
+    : litany.frContent;
 
   return (
-    <div className="h-screen h-[100dvh] bg-cream dark:bg-gray-950 flex flex-col overflow-hidden">
-      {/* Top bar */}
+    <div
+      className="h-screen h-[100dvh] bg-cream dark:bg-gray-950 flex flex-col overflow-hidden"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
+      {/* ── Header ── */}
       <header className="glass-header text-white safe-top z-50 flex-shrink-0">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+        <div className="max-w-2xl mx-auto px-4 py-2 flex items-center justify-between">
           <button
             onClick={() => navigate('/')}
-            className="flex items-center gap-1 text-sm touch-target hover:opacity-80 transition-opacity"
+            className="flex items-center gap-1 text-sm touch-target hover:opacity-80"
           >
-            <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="hidden sm:inline">{t('back')}</span>
           </button>
 
@@ -144,110 +124,80 @@ const prevLitany = () => {
           </div>
 
           <button
-            onClick={handleResetAll}
-            className="p-1.5 rounded-lg bg-white/15 hover:bg-white/25 active:bg-white/35 
-                       transition-colors touch-target"
+            onClick={() => resetAllCounters(section.id)}
+            className="p-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition-colors touch-target"
             title={t('resetAll')}
           >
             <RotateCcw className="w-4 h-4" />
           </button>
         </div>
-
-        {/* Step indicator */}
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 pb-1.5">
-          <div className="flex gap-0.5">
-            {section.litanies.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentIndex(i)}
-                className={`flex-1 h-1 rounded-full transition-all duration-300
-                  ${i === currentIndex 
-                    ? 'bg-white' 
-                    : i < currentIndex 
-                      ? 'bg-white/50' 
-                      : 'bg-white/20'
-                  }`}
-              />
-            ))}
-          </div>
-        </div>
       </header>
 
-      <div className="flex justify-center gap-2 mt-4 mb-6">
-  {section.litanies.map((_, index) => (
-    <button
-      key={index}
-      onClick={() => setCurrentIndex(index)}
-      className={`w-2.5 h-2.5 rounded-full transition-all ${
-        index === currentIndex
-          ? 'bg-primary-600 scale-125'
-          : 'bg-gray-300 dark:bg-gray-700'
-      }`}
-    />
-  ))}
-</div>
+      {/* ── Points de progression ── */}
+      <div className="flex justify-center gap-2 py-3 flex-shrink-0">
+        {section.litanies.map((_, i) => (
+          <button
+            key={i}
+            onClick={() => setCurrentIndex(i)}
+            className={`rounded-full transition-all duration-300 ${
+              i === currentIndex
+                ? 'w-4 h-2.5 bg-primary-600'
+                : 'w-2.5 h-2.5 bg-gray-300 dark:bg-gray-700'
+            }`}
+          />
+        ))}
+      </div>
 
-      {/* Content - scrollable area for text only */}
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 py-2 flex flex-col overflow-hidden">
+      {/* ── Contenu principal ── */}
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 flex flex-col overflow-hidden">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
-            initial={{ opacity: 0, x: 30 }}
+            initial={{ opacity: 0, x: 40 }}
             animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -30 }}
-            transition={{ duration: 0.25 }}
-            className="flex-1 flex flex-col h-full"
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.22 }}
+            className="flex-1 flex flex-col overflow-hidden"
           >
-            
-            {/* Text Content Area - Scrollable if needed, but tries to fit */}
-            <div className="flex-1 overflow-y-auto flex flex-col min-h-0 pb-2">
-              {/* Litany name */}
-              <div className="text-center mb-2">
+            {/* Texte scrollable */}
+            <div className="flex-1 overflow-y-auto flex flex-col gap-3 pb-2">
+              {/* Nom de la litanie */}
+              <div className="text-center">
                 <h2 className="font-arabic text-base sm:text-lg text-primary-800 dark:text-primary-300">
                   {litany.arName}
                 </h2>
-                <p className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                  {litanyName}
-                </p>
+                <p className="text-[10px] text-gray-500 dark:text-gray-400 mt-0.5">{litanyName}</p>
               </div>
 
-              {/* Arabic text */}
-              <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 
-                              shadow-sm p-3 sm:p-4 mb-2 shrink-0">
-                <p className="arabic-text text-base sm:text-lg md:text-xl leading-[2.2] sm:leading-[2.4] text-gray-900 dark:text-gray-100 text-center">
+              {/* Texte arabe */}
+              <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-100 dark:border-gray-800 shadow-sm p-4">
+                <p className="arabic-text text-lg sm:text-xl leading-[2.4] text-gray-900 dark:text-gray-100 text-center">
                   {litany.arContent}
                 </p>
               </div>
 
-              {/* Transliteration & Translation Container */}
-              <div className="flex flex-col gap-2 shrink-0">
-                {/* Transliteration */}
-                {litany.transcription && (
-                  <div className="px-1">
-                    <p className="text-[9px] uppercase tracking-wider text-gray-400 dark:text-gray-600 mb-0.5 font-medium">
-                      {t('transliteration')}
-                    </p>
-                    <p className="transliteration-text text-[11px] sm:text-xs leading-snug">
-                      {litany.transcription}
-                    </p>
-                  </div>
-                )}
-
-                {/* Translation */}
+              {/* Translittération */}
+              {litany.transcription && (
                 <div className="px-1">
-                  <p className="text-[9px] uppercase tracking-wider text-gray-400 dark:text-gray-600 mb-0.5 font-medium">
-                    {t('translation')}
+                  <p className="text-[9px] uppercase tracking-wider text-gray-400 mb-0.5 font-medium">
+                    {t('transliteration')}
                   </p>
-                  <p className="text-[11px] sm:text-xs text-gray-600 dark:text-gray-400 leading-snug line-clamp-3 hover:line-clamp-none transition-all">
-                    {translation}
-                  </p>
+                  <p className="transliteration-text text-xs leading-snug">{litany.transcription}</p>
                 </div>
+              )}
+
+              {/* Traduction */}
+              <div className="px-1">
+                <p className="text-[9px] uppercase tracking-wider text-gray-400 mb-0.5 font-medium">
+                  {t('translation')}
+                </p>
+                <p className="text-xs text-gray-600 dark:text-gray-400 leading-snug">{translation}</p>
               </div>
             </div>
 
-            {/* Sibha counter - Fixed at bottom of main area */}
+            {/* Sibha (compteur) */}
             {litany.total > 1 && (
-              <div className="shrink-0 pt-2 border-t border-gray-100 dark:border-gray-800/50">
+              <div className="flex-shrink-0 pt-2 border-t border-gray-100 dark:border-gray-800/50">
                 <Sibha
                   wirdId={section.id}
                   litanyId={litany.id}
@@ -258,73 +208,35 @@ const prevLitany = () => {
             )}
           </motion.div>
         </AnimatePresence>
-
-        <div className="flex justify-between items-center mt-8 gap-4">
-
-  <button
-    onClick={prevLitany}
-    disabled={currentIndex === 0}
-    className="
-      flex items-center gap-2
-      px-5 py-3
-      rounded-xl
-      bg-white dark:bg-gray-900
-      shadow
-      disabled:opacity-40
-    "
-  >
-    <ChevronLeft size={18} />
-    Précédent
-  </button>
-
-  <button
-    onClick={nextLitany}
-    disabled={
-      currentIndex === section.litanies.length - 1
-    }
-    className="
-      flex items-center gap-2
-      px-5 py-3
-      rounded-xl
-      bg-primary-600
-      text-white
-      shadow
-      disabled:opacity-40
-    "
-  >
-    Suivant
-    <ChevronRight size={18} />
-  </button>
-
-</div>
       </main>
 
-      {/* Navigation footer */}
-      <footer className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md 
-                          border-t border-gray-100 dark:border-gray-800 safe-bottom flex-shrink-0">
-        <div className="max-w-2xl mx-auto px-4 sm:px-6 py-2 flex items-center justify-between">
+      {/* ── Boutons précédent / suivant ── */}
+      <footer className="flex-shrink-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border-t border-gray-100 dark:border-gray-800 safe-bottom">
+        <div className="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between gap-4">
           <button
             onClick={goPrev}
             disabled={isFirst}
-            className={`flex items-center gap-1 px-3 py-2 rounded-xl text-sm font-medium
-                        transition-all duration-200 touch-target
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
+                        transition-all active:scale-95 touch-target
                         ${isFirst
                           ? 'text-gray-300 dark:text-gray-700 cursor-not-allowed'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 active:scale-95'
+                          : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 shadow hover:shadow-md'
                         }`}
           >
             <ChevronLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('previous')}</span>
+            {t('previous')}
           </button>
+
+          {/* Compteur central */}
+          <span className="text-xs text-gray-400 dark:text-gray-600 font-medium tabular-nums">
+            {currentIndex + 1} / {total}
+          </span>
 
           <button
             onClick={isLast ? () => navigate('/') : goNext}
-            className={`flex items-center gap-1 px-4 py-2 rounded-xl text-sm font-medium
-                        transition-all duration-200 active:scale-95 touch-target
-                        ${isLast
-                          ? 'bg-gold-400 text-white hover:bg-gold-500'
-                          : 'bg-primary-600 text-white hover:bg-primary-700'
-                        }`}
+            className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium
+                        transition-all active:scale-95 touch-target text-white shadow hover:shadow-md
+                        ${isLast ? 'bg-gold-400 hover:bg-gold-500' : 'bg-primary-600 hover:bg-primary-700'}`}
           >
             {isLast ? t('completed') : t('next')}
             {!isLast && <ChevronRight className="w-4 h-4" />}
