@@ -149,7 +149,12 @@ export default function WirdReader() {
       </div>
 
       {/* ── Contenu principal ── */}
-      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 flex flex-col overflow-hidden">
+      {/*
+        Layout en 2 zones fixes :
+        - Zone texte (flex-1 + overflow-y-auto) : scroll si contenu long
+        - Zone Sibha (flex-shrink-0)            : toujours visible au-dessus du footer
+      */}
+      <main className="flex-1 max-w-2xl mx-auto w-full px-4 sm:px-6 flex flex-col overflow-hidden min-h-0">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -157,10 +162,10 @@ export default function WirdReader() {
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -40 }}
             transition={{ duration: 0.22 }}
-            className="flex-1 flex flex-col overflow-hidden"
+            className="flex-1 flex flex-col overflow-hidden min-h-0"
           >
-            {/* Texte scrollable */}
-            <div className="flex-1 overflow-y-auto flex flex-col gap-3 pb-2">
+            {/* Zone texte — scrollable indépendamment */}
+            <div className="flex-1 overflow-y-auto min-h-0 flex flex-col gap-3 pb-2">
               {/* Nom de la litanie */}
               <div className="text-center">
                 <h2 className="font-arabic text-base sm:text-lg text-primary-800 dark:text-primary-300">
@@ -195,7 +200,7 @@ export default function WirdReader() {
               </div>
             </div>
 
-            {/* Sibha (compteur) */}
+            {/* Sibha — toujours ancré au-dessus du footer, jamais caché */}
             {litany.total > 1 && (
               <div className="flex-shrink-0 pt-2 border-t border-gray-100 dark:border-gray-800/50">
                 <Sibha
