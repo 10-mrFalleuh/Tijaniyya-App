@@ -31,6 +31,8 @@ import EbooksManagementPage from "./pages/superadmin/EbooksManagementPage";
 import AddEbookPage from "./pages/superadmin/AddEbookPage";
 import EditEbookPage from "./pages/superadmin/EditEbookPage";
 import AdminRoute from "./components/AdminRoute";
+import EbooksPage from './pages/EbooksPage';
+import FavoritesPage from './pages/FavoritesPage';
 
 function AppInit() {
   const { login, logout, setAuthLoading } = useAppStore();
@@ -202,6 +204,28 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        <Route
+  path="/ebooks"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <EbooksPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
+
+<Route
+  path="/favorites"
+  element={
+    <ProtectedRoute>
+      <MainLayout>
+        <FavoritesPage />
+      </MainLayout>
+    </ProtectedRoute>
+  }
+/>
 
         {/* Settings */}
         <Route
