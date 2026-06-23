@@ -1,21 +1,37 @@
-import { NavLink } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
 import {
   Home,
   Volume2,
   Library,
   Settings,
-  FolderKanban,
-  User,
+  BookOpen,
 } from 'lucide-react';
 
 const navItems = [
-  { to: '/', icon: Home, labelKey: 'dashboard' },
-  { to: '/projets', icon: FolderKanban, labelKey: 'projets' },
-  { to: '/audio', icon: Volume2, labelKey: 'audio' },
-  { to: '/media', icon: Library, labelKey: 'mediaLibrary' },
-  { to: '/profile', icon: User, labelKey: 'profile' },
-  { to: '/settings', icon: Settings, labelKey: 'settings' },
+  {
+    to: '/',
+    icon: Home,
+    labelKey: 'dashboard',
+  },
+  {
+    to: '/wirds',
+    icon: BookOpen,
+    labelKey: 'wirds',
+  },
+  {
+    to: '/audio',
+    icon: Volume2,
+    labelKey: 'audio',
+  },
+  {
+    to: '/media',
+    icon: Library,
+    labelKey: 'mediaLibrary',
+  },
+  {
+    to: '/settings',
+    icon: Settings,
+    labelKey: 'settings',
+  },
 ];
 
 export default function BottomNav() {

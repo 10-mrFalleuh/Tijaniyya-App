@@ -6,10 +6,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import {
   BookOpen,
   Info,
-  Heart,
   Headphones,
   Library,
-  BookMarked,
   ChevronRight,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -101,61 +99,6 @@ export default function Dashboard() {
 
         </motion.div>
 
-        {/* ACCÈS RAPIDE */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.25 }}
-          className="mt-6"
-        >
-
-          <h2 className="font-semibold text-lg mb-4 text-gray-800 dark:text-gray-200">
-            Accès rapide
-          </h2>
-
-          <div className="grid grid-cols-2 gap-4">
-
-            <button
-              onClick={() => navigate('/')}
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 flex flex-col items-center justify-center hover:scale-[1.02] transition"
-            >
-              <BookMarked className="w-8 h-8 text-primary-600 mb-2" />
-              <span className="font-medium">
-                Wirds
-              </span>
-            </button>
-
-            <button
-              onClick={() => navigate('/audio')}
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 flex flex-col items-center justify-center hover:scale-[1.02] transition"
-            >
-              <Headphones className="w-8 h-8 text-green-600 mb-2" />
-              <span className="font-medium">
-                Audios
-              </span>
-            </button>
-
-            <button
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 flex flex-col items-center justify-center hover:scale-[1.02] transition"
-            >
-              <Library className="w-8 h-8 text-amber-600 mb-2" />
-              <span className="font-medium">
-                E-books
-              </span>
-            </button>
-
-            <button
-              className="bg-white dark:bg-gray-900 rounded-2xl shadow p-5 flex flex-col items-center justify-center hover:scale-[1.02] transition"
-            >
-              <Heart className="w-8 h-8 text-red-500 mb-2" />
-              <span className="font-medium">
-                Favoris
-              </span>
-            </button>
-
-          </div>
-        </motion.div>
-
         {/* CONDITIONS */}
         <motion.button
           initial={{ opacity: 0 }}
@@ -227,32 +170,115 @@ export default function Dashboard() {
           )}
         </AnimatePresence>
 
-        {/* WIRDS */}
-        <div className="mt-8">
+        {/* MES WIRDS */}
+<div className="mt-8">
 
-          <div className="flex items-center justify-between mb-4">
+  <div className="flex items-center justify-between mb-4">
 
-            <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-              Mes Wirds
-            </h2>
+    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+      Mes Wirds
+    </h2>
 
-            <button className="text-primary-600 text-sm font-medium">
-              Voir tout
-            </button>
+    <button
+      onClick={() => navigate('/wirds')}
+      className="text-primary-600 text-sm font-medium"
+    >
+      Voir tout
+    </button>
 
-          </div>
+  </div>
 
-          <div className="grid grid-cols-2 gap-4">
-            {wirdSections.map((section, index) => (
-              <WirdCard
-                key={section.id}
-                section={section}
-                index={index}
-              />
-            ))}
-          </div>
+  <div className="grid grid-cols-2 gap-4">
+    {wirdSections.slice(0, 4).map((section, index) => (
+      <WirdCard
+        key={section.id}
+        section={section}
+        index={index}
+      />
+    ))}
+  </div>
 
-        </div>
+</div>
+
+{/* DERNIERS AUDIOS */}
+<div className="mt-8">
+
+  <div className="flex items-center justify-between mb-4">
+
+    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+      Derniers Audios
+    </h2>
+
+    <button
+      onClick={() => navigate('/audio')}
+      className="text-primary-600 text-sm font-medium"
+    >
+      Voir tout
+    </button>
+
+  </div>
+
+  <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow">
+
+    <div className="flex items-center gap-3">
+
+      <Headphones className="w-5 h-5 text-green-600" />
+
+      <div>
+        <p className="font-medium">
+          Aucun audio disponible
+        </p>
+
+        <p className="text-sm text-gray-500">
+          Les nouveaux audios apparaîtront ici
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+{/* DERNIERS E-BOOKS */}
+<div className="mt-8">
+
+  <div className="flex items-center justify-between mb-4">
+
+    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
+      Derniers E-books
+    </h2>
+
+    <button
+      onClick={() => navigate('/ebooks')}
+      className="text-primary-600 text-sm font-medium"
+    >
+      Voir tout
+    </button>
+
+  </div>
+
+  <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow">
+
+    <div className="flex items-center gap-3">
+
+      <Library className="w-5 h-5 text-amber-600" />
+
+      <div>
+        <p className="font-medium">
+          Aucun e-book disponible
+        </p>
+
+        <p className="text-sm text-gray-500">
+          Les nouveaux e-books apparaîtront ici
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
 
         {/* FOOTER PREMIUM */}
         <motion.div
