@@ -1,5 +1,18 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
+import { motion } from 'framer-motion';
+
+import {
+  ArrowLeft,
+  Search,
+  Users,
+  Shield,
+  Crown,
+  Trash2,
+  Mail,
+  Globe,
+} from 'lucide-react';
 
 type Profile = {
   id: string;
@@ -11,6 +24,8 @@ type Profile = {
 };
 
 export default function UsersManagementPage() {
+  const navigate = useNavigate();
+
   const [users, setUsers] = useState<Profile[]>([]);
   const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(true);
@@ -26,7 +41,9 @@ export default function UsersManagementPage() {
       const { data, error } = await supabase
         .from('profiles')
         .select('*')
-        .order('created_at', { ascending: false });
+        .order('created_at', {
+          ascending: false,
+        });
 
       if (error) {
         console.error(error);
@@ -51,8 +68,7 @@ export default function UsersManagementPage() {
       .eq('id', userId);
 
     if (error) {
-      console.error(error);
-      alert('Erreur lors de la mise à jour');
+      alert('Erreur');
       return;
     }
 
@@ -63,7 +79,7 @@ export default function UsersManagementPage() {
     userId: string
   ) => {
     const confirmed = window.confirm(
-      'Voulez-vous vraiment supprimer cet utilisateur ?'
+      'Supprimer cet utilisateur ?'
     );
 
     if (!confirmed) return;
@@ -74,12 +90,10 @@ export default function UsersManagementPage() {
       .eq('id', userId);
 
     if (error) {
-      console.error(error);
       alert('Erreur de suppression');
       return;
     }
 
-    alert('Utilisateur supprimé');
     loadUsers();
   };
 
@@ -93,6 +107,43 @@ export default function UsersManagementPage() {
         .includes(search.toLowerCase())
   );
 
+  const totalUsers = users.length;
+
+  const totalAdmins = users.filter(
+    (u) => u.role === 'admin'
+  ).length;
+
+  const totalSuperAdmins = users.filter(
+    (u) => u.role === 'super_admin'
+  ).length;
+
+  const getRoleBadge = (
+    role: string
+  ) => {
+    switch (role) {
+      case 'super_admin':
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-amber-100 text-amber-700">
+            👑 Super Admin
+          </span>
+        );
+
+      case 'admin':
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-blue-100 text-blue-700">
+            🛠️ Admin
+          </span>
+        );
+
+      default:
+        return (
+          <span className="px-3 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-700">
+            👤 Utilisateur
+          </span>
+        );
+    }
+  };
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -102,135 +153,258 @@ export default function UsersManagementPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 p-6">
+    <div className="min-h-screen bg-gray-50 dark:bg-gray-950">
 
-      <h1 className="text-3xl font-bold mb-6">
-        👥 Gestion des utilisateurs
-      </h1>
+      {/* HEADER */}
+      <div className="sticky top-0 z-40 backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800">
+        <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
 
-      <input
-        type="text"
-        placeholder="Rechercher un utilisateur..."
-        value={search}
-        onChange={(e) =>
-          setSearch(e.target.value)
-        }
-        className="w-full mb-6 border rounded-xl px-4 py-3"
-      />
+          <button
+            onClick={() =>
+              navigate('/superadmin/dashboard')
+            }
+            className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white dark:bg-gray-800 shadow"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Retour
+          </button>
 
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow overflow-hidden">
+          <h1 className="font-bold text-lg">
+            Gestion des utilisateurs
+          </h1>
 
-        <table className="w-full">
-          <thead className="bg-gray-100 dark:bg-gray-800">
-            <tr>
-              <th className="text-left p-4">
-                Nom
-              </th>
+          <div />
+        </div>
+      </div>
 
-              <th className="text-left p-4">
-                Email
-              </th>
+      <div className="max-w-7xl mx-auto p-4">
 
-              <th className="text-left p-4">
-                Pays
-              </th>
+        {/* HERO */}
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: 20,
+          }}
+          animate={{
+            opacity: 1,
+            y: 0,
+          }}
+          className="
+            rounded-3xl
+            p-8
+            mb-6
+            bg-gradient-to-br
+            from-primary-700
+            via-primary-800
+            to-primary-900
+            text-white
+            shadow-2xl
+          "
+        >
+          <div className="flex items-center gap-4">
 
-              <th className="text-left p-4">
-                Rôle
-              </th>
+            <Users className="w-14 h-14" />
 
-              <th className="text-left p-4">
-                Date
-              </th>
+            <div>
+              <h1 className="text-3xl font-bold">
+                Utilisateurs
+              </h1>
 
-              <th className="text-left p-4">
-                Actions
-              </th>
-            </tr>
-          </thead>
+              <p className="opacity-90">
+                Administration des comptes
+              </p>
+            </div>
 
-          <tbody>
-            {filteredUsers.map((user) => (
-              <tr
-                key={user.id}
-                className="border-t"
-              >
-                <td className="p-4">
-                  {user.full_name}
-                </td>
+          </div>
+        </motion.div>
 
-                <td className="p-4">
-                  {user.email}
-                </td>
+        {/* STATS */}
+        <div className="grid grid-cols-3 gap-4 mb-6">
 
-                <td className="p-4">
-                  {user.country}
-                </td>
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-5 shadow">
+            <Users className="w-8 h-8 text-primary-600 mb-2" />
+            <p className="text-sm text-gray-500">
+              Utilisateurs
+            </p>
+            <h2 className="text-3xl font-bold">
+              {totalUsers}
+            </h2>
+          </div>
 
-                <td className="p-4">
-                  <div className="flex items-center gap-3">
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-5 shadow">
+            <Shield className="w-8 h-8 text-blue-600 mb-2" />
+            <p className="text-sm text-gray-500">
+              Admins
+            </p>
+            <h2 className="text-3xl font-bold">
+              {totalAdmins}
+            </h2>
+          </div>
 
-                    <span
-                      className={`px-2 py-1 rounded-full text-xs font-medium
-                      ${
-                        user.role ===
-                        'super_admin'
-                          ? 'bg-red-100 text-red-700'
-                          : user.role ===
-                              'admin'
-                            ? 'bg-blue-100 text-blue-700'
-                            : 'bg-gray-100 text-gray-700'
-                      }`}
-                    >
-                      {user.role}
-                    </span>
+          <div className="bg-white dark:bg-gray-900 rounded-3xl p-5 shadow">
+            <Crown className="w-8 h-8 text-amber-600 mb-2" />
+            <p className="text-sm text-gray-500">
+              Super Admins
+            </p>
+            <h2 className="text-3xl font-bold">
+              {totalSuperAdmins}
+            </h2>
+          </div>
 
-                    <select
-                      value={user.role}
-                      onChange={(e) =>
-                        updateRole(
-                          user.id,
-                          e.target.value
-                        )
-                      }
-                      className="border rounded-lg px-2 py-1"
-                    >
-                      <option value="user">
-                        Utilisateur
-                      </option>
+        </div>
 
-                      <option value="admin">
-                        Admin
-                      </option>
+        {/* RECHERCHE */}
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow p-4 mb-6">
 
-                      <option value="super_admin">
-                        Super Admin
-                      </option>
-                    </select>
+          <div className="relative">
 
-                  </div>
-                </td>
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
 
-                <td className="p-4">
-                  {new Date(
-                    user.created_at
-                  ).toLocaleDateString()}
-                </td>
+            <input
+              type="text"
+              placeholder="Rechercher un utilisateur..."
+              value={search}
+              onChange={(e) =>
+                setSearch(e.target.value)
+              }
+              className="w-full pl-12 pr-4 py-3 border rounded-2xl dark:bg-gray-800"
+            />
 
-                <td className="p-4">
-                  <button
-                    onClick={() =>
-                      deleteUser(user.id)
-                    }
-                    className="bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-lg"
+          </div>
+
+        </div>
+
+        {/* TABLEAU */}
+        <div className="bg-white dark:bg-gray-900 rounded-3xl shadow overflow-hidden">
+
+          <div className="overflow-x-auto">
+
+            <table className="w-full">
+
+              <thead className="bg-gray-100 dark:bg-gray-800">
+
+                <tr>
+                  <th className="text-left p-4">
+                    Utilisateur
+                  </th>
+
+                  <th className="text-left p-4">
+                    Pays
+                  </th>
+
+                  <th className="text-left p-4">
+                    Rôle
+                  </th>
+
+                  <th className="text-left p-4">
+                    Date
+                  </th>
+
+                  <th className="text-left p-4">
+                    Actions
+                  </th>
+                </tr>
+
+              </thead>
+
+              <tbody>
+
+                {filteredUsers.map((user) => (
+                  <tr
+                    key={user.id}
+                    className="border-t dark:border-gray-800"
                   >
-                    Supprimer
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+                    <td className="p-4">
+
+                      <div>
+
+                        <p className="font-semibold">
+                          {user.full_name}
+                        </p>
+
+                        <div className="flex items-center gap-2 text-sm text-gray-500">
+
+                          <Mail className="w-4 h-4" />
+
+                          {user.email}
+
+                        </div>
+
+                      </div>
+
+                    </td>
+
+                    <td className="p-4">
+
+                      <div className="flex items-center gap-2">
+                        <Globe className="w-4 h-4" />
+                        {user.country || '-'}
+                      </div>
+
+                    </td>
+
+                    <td className="p-4">
+
+                      <div className="space-y-2">
+
+                        {getRoleBadge(user.role)}
+
+                        <select
+                          value={user.role}
+                          onChange={(e) =>
+                            updateRole(
+                              user.id,
+                              e.target.value
+                            )
+                          }
+                          className="w-full border rounded-lg px-2 py-2 dark:bg-gray-800"
+                        >
+                          <option value="user">
+                            Utilisateur
+                          </option>
+
+                          <option value="admin">
+                            Admin
+                          </option>
+
+                          <option value="super_admin">
+                            Super Admin
+                          </option>
+                        </select>
+
+                      </div>
+
+                    </td>
+
+                    <td className="p-4">
+                      {new Date(
+                        user.created_at
+                      ).toLocaleDateString()}
+                    </td>
+
+                    <td className="p-4">
+
+                      <button
+                        onClick={() =>
+                          deleteUser(user.id)
+                        }
+                        className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-600 hover:bg-red-700 text-white"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                        Supprimer
+                      </button>
+
+                    </td>
+                  </tr>
+                ))}
+
+              </tbody>
+
+            </table>
+
+          </div>
+
+        </div>
 
       </div>
     </div>

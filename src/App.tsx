@@ -21,6 +21,16 @@ import BottomNav from './components/BottomNav';
 import SuperAdminLoginPage from './pages/superadmin/SuperAdminLoginPage';
 import SuperAdminDashboard from './pages/superadmin/SuperAdminDashboard';
 import UsersManagementPage from './pages/superadmin/UsersManagementPage';
+import WirdsManagementPage from './pages/superadmin/WirdsManagementPage';
+import AddWirdPage from './pages/superadmin/AddWirdPage';
+import EditWirdPage from './pages/superadmin/EditWirdPage';
+import AudiosManagementPage from './pages/superadmin/AudiosManagementPage';
+import AddAudioPage from './pages/superadmin/AddAudioPage';
+import EditAudioPage from './pages/superadmin/EditAudioPage';
+import EbooksManagementPage from './pages/superadmin/EbooksManagementPage';
+import AddEbookPage from './pages/superadmin/AddEbookPage';
+import EditEbookPage from './pages/superadmin/EditEbookPage';
+import AdminRoute from './components/AdminRoute';
 
 function AppInit() {
   const {
@@ -284,43 +294,130 @@ function App() {
           }
         />
 
-        {/* Super Admin */}
-       <Route
+  
+       {/* Super Admin Login */}
+
+<Route
+  path="/superadmin/login"
+  element={<SuperAdminLoginPage />}
+/>
+
+{/* Dashboard Super Admin */}
+
+<Route
   path="/superadmin"
   element={
-    <ProtectedRoute>
-      <MainLayout>
-        <SuperAdminDashboard />
-      </MainLayout>
-    </ProtectedRoute>
+    <AdminRoute>
+      <SuperAdminDashboard />
+    </AdminRoute>
   }
 />
 
-       <Route
+<Route
   path="/superadmin/dashboard"
   element={
-    <ProtectedRoute>
-      <MainLayout>
-        <SuperAdminDashboard />
-      </MainLayout>
-    </ProtectedRoute>
+    <AdminRoute>
+      <SuperAdminDashboard />
+    </AdminRoute>
   }
 />
+
+{/* Gestion Utilisateurs */}
 
 <Route
   path="/superadmin/users"
   element={
-    <ProtectedRoute>
-      <MainLayout>
-        <UsersManagementPage />
-      </MainLayout>
-    </ProtectedRoute>
+    <AdminRoute>
+      <UsersManagementPage />
+    </AdminRoute>
+  }
+/>
+
+{/* Gestion Wirds */}
+
+<Route
+  path="/superadmin/wirds"
+  element={
+    <AdminRoute>
+      <WirdsManagementPage />
+    </AdminRoute>
   }
 />
 
 <Route
-  path="/superadmin/users"
-  element={<UsersManagementPage />}
+  path="/superadmin/wirds/add"
+  element={
+    <AdminRoute>
+      <AddWirdPage />
+    </AdminRoute>
+  }
+/>
+
+<Route
+  path="/superadmin/wirds/edit/:id"
+  element={
+    <AdminRoute>
+      <EditWirdPage />
+    </AdminRoute>
+  }
+/>
+
+{/* Gestion Audios */}
+
+<Route
+  path="/superadmin/audios"
+  element={
+    <AdminRoute>
+      <AudiosManagementPage />
+    </AdminRoute>
+  }
+/>
+
+<Route
+  path="/superadmin/audios/add"
+  element={
+    <AdminRoute>
+      <AddAudioPage />
+    </AdminRoute>
+  }
+/>
+
+<Route
+  path="/superadmin/audios/edit/:id"
+  element={
+    <AdminRoute>
+      <EditAudioPage />
+    </AdminRoute>
+  }
+/>
+
+{/* Gestion E-books */}
+
+<Route
+  path="/superadmin/ebooks"
+  element={
+    <AdminRoute>
+      <EbooksManagementPage />
+    </AdminRoute>
+  }
+/>
+
+<Route
+  path="/superadmin/ebooks/add"
+  element={
+    <AdminRoute>
+      <AddEbookPage />
+    </AdminRoute>
+  }
+/>
+
+<Route
+  path="/superadmin/ebooks/edit/:id"
+  element={
+    <AdminRoute>
+      <EditEbookPage />
+    </AdminRoute>
+  }
 />
 
         {/* Catch-all */}
