@@ -169,34 +169,6 @@ console.log(
           )}
         </AnimatePresence>
 
-
-        {/* FOOTER PREMIUM */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="
-            mt-10
-            rounded-3xl
-            p-6
-            text-center
-            bg-white
-            dark:bg-gray-900
-            shadow
-          "
-        >
-
-          <p className="font-arabic text-xl mb-3 text-primary-700 dark:text-primary-300">
-            سُبْحَانَ رَبِّكَ رَبِّ الْعِزَّةِ عَمَّا يَصِفُونَ
-          </p>
-
-          <p className="text-sm text-gray-500 dark:text-gray-400">
-            Application officielle de lecture et de pratique
-            de la Tariqa Tijaniyya
-          </p>
-
-        </motion.div>
-
       </main>
     </div>
   );
