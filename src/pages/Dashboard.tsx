@@ -18,10 +18,16 @@ export default function Dashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { favorites } = useFavorites();
-  console.log(
+console.log(
   'DASHBOARD FAVORITES',
+  favorites
+);
+
+console.log(
+  'DASHBOARD COUNT',
   favorites.length
 );
+
 
   const [showConditions, setShowConditions] = useState(false);
 
