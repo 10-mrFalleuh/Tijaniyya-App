@@ -3,6 +3,7 @@ import Header from '../components/Header';
 import WirdCard from '../components/WirdCard';
 import { wirdSections } from '../data/litanies';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useFavorites } from '../hooks/useFavorites';
 import {
   BookOpen,
   Info,
@@ -16,6 +17,11 @@ import { useNavigate } from 'react-router-dom';
 export default function Dashboard() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { favorites } = useFavorites();
+  console.log(
+  'DASHBOARD FAVORITES',
+  favorites.length
+);
 
   const [showConditions, setShowConditions] = useState(false);
 
@@ -70,14 +76,28 @@ export default function Dashboard() {
           className="grid grid-cols-3 gap-3 mt-5"
         >
 
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 text-center shadow">
-            <p className="text-2xl font-bold text-primary-600">
-              0
-            </p>
-            <p className="text-xs text-gray-500">
-              Favoris
-            </p>
-          </div>
+          <div
+  onClick={() => navigate('/favorites')}
+  className="
+    bg-white
+    dark:bg-gray-900
+    rounded-2xl
+    p-4
+    text-center
+    shadow
+    cursor-pointer
+    hover:scale-105
+    transition
+  "
+>
+  <p className="text-2xl font-bold text-red-500">
+    {favorites.length}
+  </p>
+
+  <p className="text-xs text-gray-500">
+    Favoris
+  </p>
+</div>
 
           <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 text-center shadow">
             <p className="text-2xl font-bold text-green-600">
@@ -180,11 +200,18 @@ export default function Dashboard() {
     </h2>
 
     <button
-      onClick={() => navigate('/wirds')}
-      className="text-primary-600 text-sm font-medium"
-    >
-      Voir tout
-    </button>
+  onClick={() => navigate('/favorites')}
+  className="
+    text-red-500
+    text-sm
+    font-medium
+    flex
+    items-center
+    gap-1
+  "
+>
+  ❤️ Favoris
+</button>
 
   </div>
 
