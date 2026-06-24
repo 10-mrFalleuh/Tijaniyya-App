@@ -53,15 +53,7 @@ export default function WirdCard({ section, index }: WirdCardProps) {
         <div className={`absolute inset-0 bg-gradient-to-t ${section.color} opacity-40`} />
         <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
         
-        {/* Badge */}
-        <div className="absolute top-2 right-2 sm:top-3 sm:right-3">
-          <span
-  className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium 
-             bg-white/20 backdrop-blur-sm text-white border border-white/20"
->
-  {t('dhikr')}
-</span>
-        </div>
+        
       </div>
 
       {/* Content */}
