@@ -48,27 +48,27 @@ export default function AboutPage() {
             <Heart className="w-4 h-4 text-red-500" />
             {t('developedBy')}
           </h3>
-          <div className="space-y-3">
-            <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4">
-              <p className="font-semibold text-primary-800 dark:text-primary-300 text-sm">
-                CCS (Collectif de Codeurs Spirituels)
-              </p>
-              <p className="text-xs text-primary-600 dark:text-primary-400 mt-1">
-                {t('developerLabel')}
-              </p>
-            </div>
-            <div className="bg-gold-50 dark:bg-gold-600/10 rounded-xl p-4 border border-gold-200 dark:border-gold-600/20">
-              <p className="font-semibold text-gold-600 dark:text-gold-400 text-sm">
-                {t('supervisedBy')}
-              </p>
-              <p className="font-display text-lg font-bold text-gray-800 dark:text-gray-200 mt-1">
-                Cheikh Ahmed Karim CISSE
-              </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                {t('supervisorTitle')}
-              </p>
-            </div>
-          </div>
+         <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-5 text-center">
+  <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
+    Réalisé par le
+  </p>
+
+  <p className="font-bold text-lg text-primary-700 dark:text-primary-300">
+    Cercle des Codeurs Spirituels
+  </p>
+
+  <p className="text-sm text-gray-600 dark:text-gray-400 mt-4">
+    Sous l'égide de
+  </p>
+
+  <p className="font-display text-xl font-bold text-gold-600 dark:text-gold-400 mt-2">
+    Cheikh Ahmed Karim CISSE
+  </p>
+
+  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+    حفظه الله
+  </p>
+</div>
         </motion.div>
 
         {/* Contributions */}
@@ -98,8 +98,8 @@ export default function AboutPage() {
             سُبْحَانَ ربّكَ ربِّ العِزّةِ عمَّا يَصِفُونَ
           </p>
           <p className="text-[11px] text-gray-300 dark:text-gray-700 mt-1">
-            © 2024 CCS — Wird Tijaniya
-          </p>
+  © 2026 Cercle des Codeurs Spirituels — Wird Tijaniya
+</p>
         </div>
       </div>
     </div>
