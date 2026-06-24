@@ -125,7 +125,31 @@ console.log(
 
         </motion.div>
 
-        {/* CONDITIONS */}
+       
+
+{/* MES WIRDS */}
+
+<div className="mt-8">
+
+  <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+    Mes Wirds
+  </h2>
+
+  <div className="grid grid-cols-2 gap-4">
+
+    {wirdSections.map((section, index) => (
+      <WirdCard
+        key={section.id}
+        section={section}
+        index={index}
+      />
+    ))}
+
+  </div>
+
+</div>
+
+ {/* CONDITIONS */}
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -196,122 +220,6 @@ console.log(
           )}
         </AnimatePresence>
 
-        {/* MES WIRDS */}
-<div className="mt-8">
-
-  <div className="flex items-center justify-between mb-4">
-
-    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-      Mes Wirds
-    </h2>
-
-    <button
-  onClick={() => navigate('/favorites')}
-  className="
-    text-red-500
-    text-sm
-    font-medium
-    flex
-    items-center
-    gap-1
-  "
->
-  ❤️ Favoris
-</button>
-
-  </div>
-
-  <div className="grid grid-cols-2 gap-4">
-    {wirdSections.slice(0, 4).map((section, index) => (
-      <WirdCard
-        key={section.id}
-        section={section}
-        index={index}
-      />
-    ))}
-  </div>
-
-</div>
-
-{/* DERNIERS AUDIOS */}
-<div className="mt-8">
-
-  <div className="flex items-center justify-between mb-4">
-
-    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-      Derniers Audios
-    </h2>
-
-    <button
-      onClick={() => navigate('/audio')}
-      className="text-primary-600 text-sm font-medium"
-    >
-      Voir tout
-    </button>
-
-  </div>
-
-  <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow">
-
-    <div className="flex items-center gap-3">
-
-      <Headphones className="w-5 h-5 text-green-600" />
-
-      <div>
-        <p className="font-medium">
-          Aucun audio disponible
-        </p>
-
-        <p className="text-sm text-gray-500">
-          Les nouveaux audios apparaîtront ici
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
-
-{/* DERNIERS E-BOOKS */}
-<div className="mt-8">
-
-  <div className="flex items-center justify-between mb-4">
-
-    <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200">
-      Derniers E-books
-    </h2>
-
-    <button
-      onClick={() => navigate('/ebooks')}
-      className="text-primary-600 text-sm font-medium"
-    >
-      Voir tout
-    </button>
-
-  </div>
-
-  <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow">
-
-    <div className="flex items-center gap-3">
-
-      <Library className="w-5 h-5 text-amber-600" />
-
-      <div>
-        <p className="font-medium">
-          Aucun e-book disponible
-        </p>
-
-        <p className="text-sm text-gray-500">
-          Les nouveaux e-books apparaîtront ici
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-
-</div>
 
         {/* FOOTER PREMIUM */}
         <motion.div
