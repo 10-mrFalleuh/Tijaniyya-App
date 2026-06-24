@@ -333,17 +333,17 @@ export default function SettingsPage() {
             </h3>
 
             <button
-              onClick={() => navigate("/admin")}
-              className="
+  onClick={() => navigate("/superadmin/dashboard")}
+  className="
     w-full py-3 rounded-xl
     bg-indigo-50 dark:bg-indigo-900/20
     text-indigo-600 dark:text-indigo-400
     border border-indigo-200 dark:border-indigo-800
     font-medium
   "
-            >
-              Ouvrir le Dashboard Administrateur
-            </button>
+>
+  Ouvrir le Dashboard Administrateur
+</button>
           </motion.div>
         )}
 
