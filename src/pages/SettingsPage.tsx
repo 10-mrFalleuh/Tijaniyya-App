@@ -11,6 +11,7 @@ import {
   RotateCcw,
   LogOut,
   Settings,
+  ChevronRight,
 } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase';
@@ -343,6 +344,20 @@ export default function SettingsPage() {
           >
             Sécurité du compte
           </button>
+          <button
+  onClick={() => navigate('/about')}
+  className="
+    w-full
+    flex
+    items-center
+    justify-between
+    py-3
+    text-left
+  "
+>
+  <span>À propos</span>
+  <ChevronRight className="w-4 h-4 text-gray-400" />
+</button>
         </motion.div>
 
         {/* ADMINISTRATION */}
