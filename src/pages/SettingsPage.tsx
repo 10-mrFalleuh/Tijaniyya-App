@@ -298,8 +298,6 @@ export default function SettingsPage() {
             Compte
           </h3>
 
-      
-
           <button
             onClick={() => navigate("/account-security")}
             className="w-full text-left py-2"
@@ -323,7 +321,7 @@ export default function SettingsPage() {
         </motion.div>
 
         {/* ADMINISTRATION */}
-        {profile?.role === "super_admin" && (
+        {(profile?.role === "admin" || profile?.role === "super_admin") && (
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -335,11 +333,14 @@ export default function SettingsPage() {
             </h3>
 
             <button
-              onClick={() => navigate("/superadmin/dashboard")}
-              className="w-full py-3 rounded-xl bg-indigo-50 dark:bg-indigo-900/20
-                 text-indigo-600 dark:text-indigo-400
-                 border border-indigo-200 dark:border-indigo-800
-                 font-medium"
+              onClick={() => navigate("/admin")}
+              className="
+    w-full py-3 rounded-xl
+    bg-indigo-50 dark:bg-indigo-900/20
+    text-indigo-600 dark:text-indigo-400
+    border border-indigo-200 dark:border-indigo-800
+    font-medium
+  "
             >
               Ouvrir le Dashboard Administrateur
             </button>
