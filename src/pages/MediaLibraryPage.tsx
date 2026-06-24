@@ -136,55 +136,31 @@ export default function MediaLibraryPage() {
         {/* DERNIERS CONTENUS */}
 
         <div>
+  <h2 className="font-semibold text-lg mb-4">
+    Derniers contenus
+  </h2>
 
-          <h2 className="font-semibold text-lg mb-4">
-            Derniers contenus
-          </h2>
+  <div
+    className="
+      bg-white
+      dark:bg-gray-900
+      rounded-2xl
+      p-6
+      text-center
+      shadow
+    "
+  >
+    <Library className="w-10 h-10 mx-auto text-primary-600 mb-3" />
 
-          <div className="space-y-3">
+    <p className="font-medium">
+      Les derniers contenus apparaîtront ici
+    </p>
 
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow flex justify-between items-center">
-              <div>
-                <p className="font-medium">
-                  📖 Wird Lazim
-                </p>
-                <p className="text-xs text-gray-500">
-                  Dernière lecture
-                </p>
-              </div>
-
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow flex justify-between items-center">
-              <div>
-                <p className="font-medium">
-                  🎧 Salatoul Fatihi
-                </p>
-                <p className="text-xs text-gray-500">
-                  Audio récent
-                </p>
-              </div>
-
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            </div>
-
-            <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 shadow flex justify-between items-center">
-              <div>
-                <p className="font-medium">
-                  📚 Jawahiroul Ma'ani
-                </p>
-                <p className="text-xs text-gray-500">
-                  E-book
-                </p>
-              </div>
-
-              <ChevronRight className="w-5 h-5 text-gray-400" />
-            </div>
-
-          </div>
-
-        </div>
+    <p className="text-sm text-gray-500 mt-1">
+      Wirds, Audios et E-books récemment ajoutés
+    </p>
+  </div>
+</div>
 
         {/* FAVORIS */}
 

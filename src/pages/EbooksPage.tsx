@@ -1,32 +1,56 @@
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, BookOpen, Download } from 'lucide-react';
+import { ArrowLeft, Download, BookOpen } from 'lucide-react';
+import { supabase } from '../lib/supabase';
+
+interface Ebook {
+  id: string;
+  title: string;
+  author: string;
+  description?: string;
+  category?: string;
+  pdf_url: string;
+  cover_url?: string;
+}
 
 export default function EbooksPage() {
   const navigate = useNavigate();
 
-  const ebooks = [
-    {
-      id: 1,
-      title: "Jawahiroul Ma'ani",
-      author: "Cheikh Ahmed Tijani",
-    },
-    {
-      id: 2,
-      title: "Rimah",
-      author: "Sidi Omar Foutiyou Tall",
-    },
-    {
-      id: 3,
-      title: "Kashf Al-Ilbas",
-      author: "Tariqa Tijaniyya",
-    },
-  ];
+  const [ebooks, setEbooks] = useState<Ebook[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadEbooks();
+  }, []);
+
+  const loadEbooks = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('ebooks')
+        .select('*')
+        .eq('is_published', true)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      setEbooks(data || []);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-cream dark:bg-gray-950 pb-24">
 
+      {/* Header */}
       <div className="bg-primary-800 text-white">
         <div className="max-w-2xl mx-auto p-4 flex items-center gap-3">
+
           <button onClick={() => navigate(-1)}>
             <ArrowLeft className="w-5 h-5" />
           </button>
@@ -34,51 +58,112 @@ export default function EbooksPage() {
           <h1 className="text-xl font-bold">
             📚 E-books
           </h1>
+
         </div>
       </div>
 
-      <div className="max-w-2xl mx-auto p-4 space-y-4">
+      {/* Loading */}
+      {loading && (
+        <div className="text-center py-10">
+          Chargement...
+        </div>
+      )}
 
-        {ebooks.map((ebook) => (
-          <div
-            key={ebook.id}
-            className="
-              bg-white
-              dark:bg-gray-900
-              rounded-2xl
-              shadow
-              p-4
-              flex
-              justify-between
-              items-center
-            "
-          >
-            <div>
-              <h3 className="font-semibold">
-                {ebook.title}
-              </h3>
+      {/* Liste */}
+      {!loading && (
+        <div className="max-w-2xl mx-auto p-4 space-y-4">
 
-              <p className="text-sm text-gray-500">
-                {ebook.author}
-              </p>
+          {ebooks.length === 0 && (
+            <div className="text-center py-10 text-gray-500">
+              Aucun e-book disponible
             </div>
+          )}
 
-            <button
+          {ebooks.map((ebook) => (
+            <div
+              key={ebook.id}
               className="
-                flex items-center gap-2
-                bg-primary-600
-                text-white
-                px-3 py-2
-                rounded-xl
+                bg-white
+                dark:bg-gray-900
+                rounded-2xl
+                shadow
+                overflow-hidden
               "
             >
-              <Download className="w-4 h-4" />
-              Lire
-            </button>
-          </div>
-        ))}
 
-      </div>
+              {ebook.cover_url && (
+                <img
+                  src={ebook.cover_url}
+                  alt={ebook.title}
+                  className="w-full h-48 object-cover"
+                />
+              )}
+
+              <div className="p-4">
+
+                <div className="flex items-center gap-2 mb-2">
+                  <BookOpen className="w-5 h-5 text-primary-600" />
+                  <h3 className="font-bold text-lg">
+                    {ebook.title}
+                  </h3>
+                </div>
+
+                <p className="text-sm text-gray-500">
+                  {ebook.author}
+                </p>
+
+                {ebook.category && (
+                  <span
+                    className="
+                      inline-block
+                      mt-2
+                      text-xs
+                      bg-primary-100
+                      text-primary-700
+                      px-2
+                      py-1
+                      rounded-full
+                    "
+                  >
+                    {ebook.category}
+                  </span>
+                )}
+
+                {ebook.description && (
+                  <p className="mt-3 text-sm text-gray-600 dark:text-gray-300">
+                    {ebook.description}
+                  </p>
+                )}
+
+                <button
+                  onClick={() =>
+                    window.open(ebook.pdf_url, '_blank')
+                  }
+                  className="
+                    mt-4
+                    w-full
+                    flex
+                    items-center
+                    justify-center
+                    gap-2
+                    bg-primary-600
+                    text-white
+                    py-3
+                    rounded-xl
+                    hover:bg-primary-700
+                  "
+                >
+                  <Download className="w-4 h-4" />
+                  Lire le PDF
+                </button>
+
+              </div>
+
+            </div>
+          ))}
+
+        </div>
+      )}
     </div>
   );
 }

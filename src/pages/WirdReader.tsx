@@ -6,6 +6,8 @@ import Sibha from '../components/Sibha';
 import { useState, useCallback, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowLeft, RotateCcw, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Heart } from 'lucide-react';
+import { useFavorites } from '../hooks/useFavorites';
 
 export default function WirdReader() {
   const { id } = useParams<{ id: string }>();
@@ -13,7 +15,19 @@ export default function WirdReader() {
   const { t } = useTranslation();
   const { language, resetAllCounters } = useAppStore();
 
-  const section = wirdSections.find((s) => s.id === Number(id));
+
+const section = wirdSections.find(
+  (s) => s.id === Number(id)
+);
+
+const { favorites, toggleFavorite } =
+  useFavorites();
+
+const isFavorite =
+  section
+    ? favorites.includes(String(section.id))
+    : false;
+
   const [currentIndex, setCurrentIndex] = useState(0);
 
   // ── Swipe ────────────────────────────────────────────────────────────────
@@ -108,30 +122,68 @@ export default function WirdReader() {
       onTouchEnd={handleTouchEnd}
     >
       {/* ── Header ── */}
-      <header className="glass-header text-white safe-top z-50 flex-shrink-0">
-        <div className="max-w-2xl mx-auto px-4 py-2 flex items-center justify-between">
-          <button
-            onClick={() => navigate('/')}
-            className="flex items-center gap-1 text-sm touch-target hover:opacity-80"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span className="hidden sm:inline">{t('back')}</span>
-          </button>
+     <header className="glass-header text-white safe-top z-50 flex-shrink-0">
+  <div className="max-w-2xl mx-auto px-4 py-2 flex items-center justify-between">
 
-          <div className="text-center flex-1 mx-4">
-            <p className="font-arabic text-sm sm:text-base">{section.nameAr}</p>
-            <p className="text-[10px] opacity-75 truncate">{sectionName}</p>
-          </div>
+    <button
+      onClick={() => navigate('/wirds')}
+      className="flex items-center gap-1 text-sm"
+    >
+      <ArrowLeft className="w-4 h-4" />
+      <span>{t('back')}</span>
+    </button>
 
-          <button
-            onClick={() => resetAllCounters(section.id)}
-            className="p-1.5 rounded-lg bg-white/15 hover:bg-white/25 transition-colors touch-target"
-            title={t('resetAll')}
-          >
-            <RotateCcw className="w-4 h-4" />
-          </button>
-        </div>
-      </header>
+    <div className="text-center flex-1 mx-4">
+      <p className="font-arabic text-sm sm:text-base">
+        {section.nameAr}
+      </p>
+
+      <p className="text-[10px] opacity-75 truncate">
+        {sectionName}
+      </p>
+    </div>
+
+    <div className="flex items-center gap-2">
+
+      <button
+        onClick={() =>
+          toggleFavorite(String(section.id))
+        }
+        className="
+          p-2
+          rounded-lg
+          bg-white/15
+          hover:bg-white/25
+          transition
+        "
+      >
+        <Heart
+          className={`w-4 h-4 ${
+            isFavorite
+              ? 'fill-red-500 text-red-500'
+              : ''
+          }`}
+        />
+      </button>
+
+      <button
+        onClick={() =>
+          resetAllCounters(section.id)
+        }
+        className="
+          p-2
+          rounded-lg
+          bg-white/15
+          hover:bg-white/25
+        "
+      >
+        <RotateCcw className="w-4 h-4" />
+      </button>
+
+    </div>
+
+  </div>
+</header>
 
       {/* ── Points de progression ── */}
       <div className="flex justify-center gap-2 py-3 flex-shrink-0">
