@@ -1,69 +1,105 @@
 import { useNavigate } from 'react-router-dom';
+import { ArrowLeft, Heart } from 'lucide-react';
+
 import WirdCard from '../components/WirdCard';
 import { wirdSections } from '../data/litanies';
-import { Heart } from 'lucide-react';
 import { useFavorites } from '../hooks/useFavorites';
 
 export default function WirdsPage() {
   const navigate = useNavigate();
+
   const { favorites } = useFavorites();
 
   return (
     <div className="min-h-screen bg-cream dark:bg-gray-950 pb-24">
 
-      <div className="max-w-2xl mx-auto p-4">
+      {/* HEADER */}
 
-        <h1 className="text-2xl font-bold mb-6">
-          📖 Mes Wirds
-        </h1>
+      <div className="bg-primary-800 text-white">
+
+        <div className="max-w-2xl mx-auto p-4 flex items-center gap-3">
+
+          <button
+            onClick={() => navigate(-1)}
+            className="
+              p-2
+              rounded-xl
+              hover:bg-white/10
+              transition
+            "
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
+
+          <div>
+
+            <h1 className="text-xl font-bold">
+              📖 Mes Wirds
+            </h1>
+
+            <p className="text-sm opacity-80">
+              {favorites.length} favori(s)
+            </p>
+
+          </div>
+
+        </div>
+
+      </div>
+
+      {/* CONTENU */}
+
+      <div className="max-w-2xl mx-auto p-4">
 
         <div className="grid grid-cols-2 gap-4">
 
-  {wirdSections.map((section, index) => {
+          {wirdSections.map((section, index) => {
 
-    const isFavorite =
-      favorites.includes(String(section.id));
+            const isFavorite =
+              favorites.includes(String(section.id));
 
-    return (
-      <div
-        key={section.id}
-        className="relative"
-      >
+            return (
+              <div
+                key={section.id}
+                className="relative"
+              >
 
-        {isFavorite && (
-          <div
-            className="
-              absolute
-              top-2
-              left-2
-              z-20
-              bg-white/90
-              rounded-full
-              p-1.5
-              shadow
-            "
-          >
-            <Heart
-              className="
-                w-4
-                h-4
-                fill-red-500
-                text-red-500
-              "
-            />
-          </div>
-        )}
+                {/* BADGE FAVORI */}
 
-        <WirdCard
-          section={section}
-          index={index}
-        />
+                {isFavorite && (
+                  <div
+                    className="
+                      absolute
+                      top-2
+                      left-2
+                      z-20
+                      bg-white/95
+                      rounded-full
+                      p-1.5
+                      shadow-lg
+                    "
+                  >
+                    <Heart
+                      className="
+                        w-4
+                        h-4
+                        fill-red-500
+                        text-red-500
+                      "
+                    />
+                  </div>
+                )}
 
-      </div>
-    );
-  })}
+                <WirdCard
+                  section={section}
+                  index={index}
+                />
 
-</div>
+              </div>
+            );
+          })}
+
+        </div>
 
       </div>
 
