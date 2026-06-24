@@ -298,6 +298,7 @@ export default function SettingsPage() {
             Compte
           </h3>
 
+      
 
           <button
             onClick={() => navigate("/account-security")}
