@@ -38,7 +38,7 @@ console.log(
 
       <main className="max-w-2xl mx-auto px-4 sm:px-6 pb-24">
 
-        {/* HERO */}
+        {/* HERO 
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -72,7 +72,7 @@ console.log(
             </p>
 
           </div>
-        </motion.div>
+        </motion.div>*/}
 
        {/* CONDITIONS */}
         <motion.button
