@@ -74,57 +74,6 @@ console.log(
           </div>
         </motion.div>
 
-        {/* STATS */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.15 }}
-          className="grid grid-cols-3 gap-3 mt-5"
-        >
-
-          <div
-  onClick={() => navigate('/favorites')}
-  className="
-    bg-white
-    dark:bg-gray-900
-    rounded-2xl
-    p-4
-    text-center
-    shadow
-    cursor-pointer
-    hover:scale-105
-    transition
-  "
->
-  <p className="text-2xl font-bold text-red-500">
-    {favorites.length}
-  </p>
-
-  <p className="text-xs text-gray-500">
-    Favoris
-  </p>
-</div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 text-center shadow">
-            <p className="text-2xl font-bold text-green-600">
-              0
-            </p>
-            <p className="text-xs text-gray-500">
-              Lectures
-            </p>
-          </div>
-
-          <div className="bg-white dark:bg-gray-900 rounded-2xl p-4 text-center shadow">
-            <p className="text-2xl font-bold text-amber-600">
-              0
-            </p>
-            <p className="text-xs text-gray-500">
-              Audios
-            </p>
-          </div>
-
-        </motion.div>
-
        
 
 {/* MES WIRDS */}
