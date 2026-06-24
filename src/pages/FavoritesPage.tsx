@@ -54,8 +54,11 @@ export default function FavoritesPage() {
           </button>
 
           <h1 className="text-xl font-bold">
-            ❤️ Mes Favoris
+            Mes Favoris
           </h1>
+          <p className="text-sm text-white/80">
+  {favoriteWirds.length} favori(s)
+</p>
 
         </div>
       </div>
