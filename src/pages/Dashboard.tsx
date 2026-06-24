@@ -74,31 +74,7 @@ console.log(
           </div>
         </motion.div>
 
-       
-
-{/* MES WIRDS */}
-
-<div className="mt-8">
-
-  <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
-    Mes Wirds
-  </h2>
-
-  <div className="grid grid-cols-2 gap-4">
-
-    {wirdSections.map((section, index) => (
-      <WirdCard
-        key={section.id}
-        section={section}
-        index={index}
-      />
-    ))}
-
-  </div>
-
-</div>
-
- {/* CONDITIONS */}
+       {/* CONDITIONS */}
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -168,6 +144,30 @@ console.log(
             </motion.div>
           )}
         </AnimatePresence>
+
+{/* MES WIRDS */}
+
+<div className="mt-8">
+
+  <h2 className="text-xl font-bold text-gray-800 dark:text-gray-200 mb-4">
+    Mes Wirds
+  </h2>
+
+  <div className="grid grid-cols-2 gap-4">
+
+    {wirdSections.map((section, index) => (
+      <WirdCard
+        key={section.id}
+        section={section}
+        index={index}
+      />
+    ))}
+
+  </div>
+
+</div>
+
+ 
 
       </main>
     </div>
