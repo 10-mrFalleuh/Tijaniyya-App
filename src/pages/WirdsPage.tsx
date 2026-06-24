@@ -37,10 +37,6 @@ export default function WirdsPage() {
               📖 Mes Wirds
             </h1>
 
-            <p className="text-sm opacity-80">
-              {favorites.length} favori(s)
-            </p>
-
           </div>
 
         </div>
