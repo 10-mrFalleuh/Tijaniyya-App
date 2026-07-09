@@ -33,6 +33,7 @@ import EditEbookPage from "./pages/superadmin/EditEbookPage";
 import AdminRoute from "./components/AdminRoute";
 import EbooksPage from './pages/EbooksPage';
 import FavoritesPage from './pages/FavoritesPage';
+import Privacy from './components/Privacy';
 
 function AppInit() {
   const { login, logout, setAuthLoading } = useAppStore();
@@ -404,6 +405,10 @@ function App() {
               <EditEbookPage />
             </AdminRoute>
           }
+        />
+        <Route
+          path="/privacy"
+          element={<Privacy />}
         />
 
         {/* Catch-all */}
